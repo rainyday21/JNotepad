@@ -8,10 +8,10 @@ import javax.swing.text.BadLocationException;
 import java.util.*;
 import java.io.*;
 
-public class JNotePad implements ActionListener{
+public class Notepad implements ActionListener{
     private JFrame frame = new JFrame("Untitled - Notepad");
     private JTextArea mainText = new JTextArea();
-    public JNotePad() {
+    public Notepad() {
     frame.setLayout(new BorderLayout());
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(640, 480);
@@ -125,24 +125,13 @@ public class JNotePad implements ActionListener{
                     JOptionPane.showMessageDialog(frame, "This line does not exist!");
                 }
                 else {
-                try {
-                mainText.setCaretPosition(mainText.getLineStartOffset(pos)); 
+                    JOptionPane.showMessageDialog(frame, "The line you seek is line "+ Integer.toString(pos)+ ".");
                 }
-                catch (BadLocationException bl) {
-                    JOptionPane.showMessageDialog(frame, "This position is invalid");
-                    bl.printStackTrace();
-                }
-                /*for (int i = 0; i < (mainText.getLineCount() & pos); i++) {
-                    
-                    if (pos = i) {
-                          
-                    }
-                } */
-                }
-                
+                break;
             }
             case "About": {
                 JOptionPane.showMessageDialog(frame, "Notepad by O. Reid");
+                break;
             }
         }
     }
@@ -150,10 +139,10 @@ public class JNotePad implements ActionListener{
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new JNotePad();
+                new Notepad();
             }
         });
     }
-
+    
 
 }

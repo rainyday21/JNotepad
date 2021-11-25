@@ -4,6 +4,7 @@ import java.awt.*;
 public class GoToDlg {
 
 	private int position;
+	//private boolean init = false;
 	
 	public int getPosition() {
 		return position;
@@ -12,6 +13,7 @@ public class GoToDlg {
 	public void setPosition(int position) {
 		this.position = position;
 	}
+	
 	
 	public static int displayGUI(JFrame parent, int pos) {
 		GoToDlg dlg = new GoToDlg();
@@ -23,12 +25,15 @@ public class GoToDlg {
 		dialog.setLayout(new GridLayout(3,1));
 		dialog.setSize(300, 300);
 		JLabel label = new JLabel("Line Number: ");
-		JFormattedTextField enter = new JFormattedTextField(10);
+		JFormattedTextField enter = new JFormattedTextField(1);
 		
 		JButton go = new JButton("Go to");
+		
 		go.addActionListener(ae -> {
 			dlg.setPosition(Integer.parseInt(enter.getText()));
 			dialog.setVisible(false);
+			
+			
 		});
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(ae -> {
@@ -43,8 +48,9 @@ public class GoToDlg {
 		dialog.add(cancel);
 		dialog.getRootPane().setDefaultButton(go);
 		dialog.setVisible(true);
-		return dlg.getPosition();
-	}
+			return dlg.getPosition();
+		}
+	
 
 		
 
