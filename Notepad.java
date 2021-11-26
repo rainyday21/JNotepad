@@ -1,3 +1,12 @@
+// 
+// Name: Reid, Orrane
+// Project: 4
+// Due:       11/24/2021
+// Course: CS-  2450-01-f21 
+// 
+// Description: 
+//      JNotepad prt 1
+//
 import java.awt.event.*;
 import java.io.IOException;
 import java.awt.*;
@@ -19,18 +28,25 @@ public class Notepad implements ActionListener{
     JMenuBar optionBar = new JMenuBar();
     
     JMenu[] options = new JMenu[5];
-    JMenuItem[] items = new JMenuItem[5];
+    JMenuItem[] items = new JMenuItem[19];
     
     
-    options[0] = new JMenu("File");
-    items[0] = new JMenuItem("Open");
+    options[0] = new JMenu("File"); //File
+    options[1] = new JMenu("Format");
+    options[2] = new JMenu("Edit");
+    options[3] = new JMenu("Print");
+    options[4] = new JMenu("Help");
+    
+        
+    items[0] = new JMenuItem("Open"); //Open
     options[0].add(items[0]);
+    
     options[0].add(new JMenuItem("-----"));
     items[1] = new JMenuItem("Exit");
-    options[0].add(items[1]);
+    options[0].add(items[1]); //option one
     
 
-    options[1] = new JMenu("Format");
+    
     items[2] = new JMenuItem("Font");
     options[1].add(items[2]);
     items[3] = new JMenuItem("Set Background");
@@ -46,15 +62,7 @@ public class Notepad implements ActionListener{
     });
     options[1].add(word_wrap);
     
-    options[2] = new JMenu("Edit");
-    options[3] = new JMenu("View");
-    JMenuItem go = new JMenuItem("Go to");
-    go.addActionListener(this);
-    options[3].add(go);
-    options[4] = new JMenu("Help");
-    items[4] = new JMenuItem("About");
-    options[4].add(items[4]);
-        
+    
     
     
     for (JMenu o: options) {
@@ -119,16 +127,10 @@ public class Notepad implements ActionListener{
                 }
                 break;
             } 
-            case "Go to": {
-                int pos = GoToDlg.displayGUI(frame, mainText.getCaretPosition());
-                if (pos < 0 && pos > mainText.getLineCount()) {
-                    JOptionPane.showMessageDialog(frame, "This line does not exist!");
-                }
-                else {
-                    JOptionPane.showMessageDialog(frame, "The line you seek is line "+ Integer.toString(pos)+ ".");
-                }
+            case "Print": {
+                JOptionPane.showMessageDialog(frame, "Printing...");
                 break;
-            }
+                }
             case "About": {
                 JOptionPane.showMessageDialog(frame, "Notepad by O. Reid");
                 break;
