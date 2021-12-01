@@ -20,6 +20,8 @@ import java.io.*;
 public class Notepad implements ActionListener{
 	private JFrame frame = new JFrame("Untitled - Notepad");
 	private JTextArea mainText = new JTextArea();
+	private String[] clipboard = new String [5];
+	
 	public Notepad() {
 	frame.setLayout(new BorderLayout());
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -94,6 +96,21 @@ public class Notepad implements ActionListener{
 		items[i].addActionListener(this);
 	}
 	
+	JPopupMenu pop = new JPopupMenu();
+	pop.add(items[8]);
+	pop.add(items[9]);
+	pop.add(items[10]);
+	
+	mainText.addMouseListener(new MouseAdapter() {
+		public void mousePressed(MouseEvent me) {
+			if (me.isPopupTrigger())
+				pop.show(me.getComponent(), me.getX(), me.getY());
+		}
+		public void mouseReleased(MouseEvent me) {
+			if(me.isPopupTrigger())
+				pop.show(me.getComponent(), me.getX(), me.getY());
+		}
+	});
 	
 	frame.add(optionBar, BorderLayout.NORTH);
 	frame.add(textScrollPane, BorderLayout.CENTER);
@@ -142,17 +159,39 @@ public class Notepad implements ActionListener{
 					mainText.setFont(font);
 				break;    
 			} 
-			case "Set Background": {
-				Color back = JColorChooser.showDialog(null, "Choose Color", null);
-				if (back != null) {
-					mainText.setBackground(back);
-				}
-				break;
+		case "Go to": {
+			int pos = GoToDlg.displayGUI(frame, mainText.getCaretPosition());
+			if (pos < 0 && pos > mainText.getLineCount()) {
+				JOptionPane.showMessageDialog(frame, "This line does not exist!");
 			}
-			case "About": {
-				JOptionPane.showMessageDialog(frame, "Notepad by O. Reid");
-				break;
+			else {
+				JOptionPane.showMessageDialog(frame, "The line you seek is line "+ Integer.toString(pos)+ ".");
 			}
+			break;
+		}
+		case "About": {
+			JOptionPane.showMessageDialog(frame, "Notepad by O. Reid");
+			break;
+		}
+		
+		case "Delete": {
+			
+		}
+		
+		case "Cut": {
+			mainText.cut();
+			break;
+		}
+		
+		case "Copy": {
+			mainText.copy();
+			break;
+		}
+		
+		case "Paste": {
+			mainText.paste();
+			break;
+		}
 		}
 	}
 	
