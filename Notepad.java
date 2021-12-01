@@ -20,7 +20,8 @@ import java.io.*;
 public class Notepad implements ActionListener{
 	private JFrame frame = new JFrame("Untitled - Notepad");
 	private JTextArea mainText = new JTextArea();
-	private String[] clipboard = new String [5];
+	private boolean saved = false;
+	
 	
 	public Notepad() {
 	frame.setLayout(new BorderLayout());
@@ -57,7 +58,15 @@ public class Notepad implements ActionListener{
 	items[15] = new JMenuItem("Go to");
 	items[16] = new JMenuItem("Select All");
 	items[17] = new JMenuItem("Time/Date");
-	items[18] = new JMenuItem("Word Wrap");
+	items[18] = new JCheckBoxMenuItem("Word Wrap");
+	items[18].addItemListener(new ItemListener() {
+		public void itemStateChanged(ItemEvent ie) {
+			if (ie.getStateChange() == ItemEvent.SELECTED)
+				mainText.setWrapStyleWord(true);
+			else
+				mainText.setWrapStyleWord(false);
+		}
+	});
 	items[19] = new JMenuItem("Font");
 	items[20] = new JMenuItem("View Help");
 	items[21] = new JMenuItem("Status Bar");
@@ -93,6 +102,7 @@ public class Notepad implements ActionListener{
 			items[i].setEnabled(false);
 			break;
 		}
+		if (i != 18)
 		items[i].addActionListener(this);
 	}
 	
@@ -122,6 +132,9 @@ public class Notepad implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
+			case "New": {
+				
+			}
 			case "Open": {
 				JFileChooser j = new JFileChooser();
 				FileReader fr;
@@ -134,6 +147,7 @@ public class Notepad implements ActionListener{
 						fr = new FileReader(tempText);
 						mainText.read(fr, null);
 						frame.setTitle(j.getSelectedFile().getName() + " - Notepad");
+						saved = true;
 					}
 					catch (IOException ex) {
 						JOptionPane.showMessageDialog(frame, "Error!");
@@ -142,6 +156,10 @@ public class Notepad implements ActionListener{
 					else 
 						JOptionPane.showMessageDialog(frame, "Invalid file or no file here!");
 			 break;           
+			}
+			
+			case "Save": {
+				saved = true;
 			}
 			case "Exit": {
 				int answer = JOptionPane.showConfirmDialog(frame, "Are you sure? ", "Exit now?", JOptionPane.YES_NO_OPTION);
@@ -173,6 +191,8 @@ public class Notepad implements ActionListener{
 			JOptionPane.showMessageDialog(frame, "Notepad by O. Reid");
 			break;
 		}
+		
+		
 		
 		case "Delete": {
 			mainText.getSelectedText();
