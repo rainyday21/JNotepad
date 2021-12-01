@@ -175,7 +175,7 @@ public class Notepad implements ActionListener{
 		}
 		
 		case "Delete": {
-			
+			mainText.getSelectedText();
 		}
 		
 		case "Cut": {
