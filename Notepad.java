@@ -308,8 +308,9 @@ public class Notepad implements ActionListener{
 	}
 	
 	class JavaFileFilter extends FileFilter {
+		private File f;
 		public boolean accept(File file) {
-			if(file.getName().endsWith(".txt"))
+			if(file.getName().endsWith(".txt") && file.getName().endsWith(".java"))
 				return true;
 			if(file.isDirectory())
 			return true;
@@ -318,7 +319,10 @@ public class Notepad implements ActionListener{
 		}
 		
 		public String getDescription() {
-			return "Text Files";
+			String ret;
+			if (file.getName().endsWith(".txt")) {
+			}
+			return "Text Files" && "Java Source Files";
 		}
 	}
 }
