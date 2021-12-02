@@ -20,7 +20,7 @@ import java.io.*;
 public class Notepad implements ActionListener{
 	private JFrame frame = new JFrame("Untitled - Notepad");
 	private JTextArea mainText = new JTextArea();
-	private boolean saved = false;
+	private boolean saved = true;
 	
 	
 	public Notepad() {
@@ -147,7 +147,7 @@ public class Notepad implements ActionListener{
 						fr = new FileReader(tempText);
 						mainText.read(fr, null);
 						frame.setTitle(j.getSelectedFile().getName() + " - Notepad");
-						saved = true;
+						saved = false;
 					}
 					catch (IOException ex) {
 						JOptionPane.showMessageDialog(frame, "Error!");
@@ -159,16 +159,52 @@ public class Notepad implements ActionListener{
 			}
 			
 			case "Save": {
+				JFileChooser j = new JFileChooser();
+				FileReader fr;
+				int result = j.showSaveDialog(null);
+				
+					if (result == JFileChooser.APPROVE_OPTION) {
+					/*try {
+					
+					   File tempText = j.getSelectedFile();
+						fr = new FileReader(tempText);
+						mainText.read(fr, null);
+						frame.setTitle(j.getSelectedFile().getName() + " - Notepad");
+						saved = true; 
+					}
+					catch (IOException ex) {
+						JOptionPane.showMessageDialog(frame, "Error!");
+					} */
+					}
+					else 
+						JOptionPane.showMessageDialog(frame, "Invalid file or no file here!");
+			          
 				saved = true;
+				break;  
 			}
 			case "Exit": {
-				int answer = JOptionPane.showConfirmDialog(frame, "Are you sure? ", "Exit now?", JOptionPane.YES_NO_OPTION);
+				if (saved == true) {
+				int answer = JOptionPane.showConfirmDialog(frame, "Exit now? ", "Exit", JOptionPane.YES_NO_OPTION);
 			switch (answer) {
 				case JOptionPane.YES_OPTION:
 					System.exit(0);
 					break;
 				case JOptionPane.NO_OPTION:
 					break;
+				}
+			}
+			else{ 
+				int answer = JOptionPane.showConfirmDialog(frame, "You have not saved. Do you want to save and exit now? ", "Exit", JOptionPane.YES_NO_CANCEL_OPTION);
+			switch (answer) {
+				case JOptionPane.YES_OPTION:
+					saved = true;
+					System.exit(0);
+					break;
+				case JOptionPane.NO_OPTION:
+					System.exit(0);
+					break;
+				}
+			break;
 			}
 			break;
 			}
