@@ -159,7 +159,8 @@ public class Notepad implements ActionListener{
 			}
 			case "Open": {
 				JFileChooser j = new JFileChooser();
-				j.setFileFilter(new JavaFileFilter());
+				new CustomJavaFileFilter()
+				j.setFileFilter(new CustomJavaFileFilter());
 				FileReader fr;
 				int result = j.showOpenDialog(null);
 				
@@ -307,10 +308,11 @@ public class Notepad implements ActionListener{
 		});
 	}
 	
-	class JavaFileFilter extends FileFilter {
-		private File f;
+	class CustomJavaFileFilter extends FileFilter {
+		
+		private String filetype;
 		public boolean accept(File file) {
-			if(file.getName().endsWith(".txt") && file.getName().endsWith(".java"))
+			if(file.getName().endsWith(filetype))
 				return true;
 			if(file.isDirectory())
 			return true;
@@ -319,11 +321,21 @@ public class Notepad implements ActionListener{
 		}
 		
 		public String getDescription() {
-			String ret;
-			if (file.getName().endsWith(".txt")) {
+			String desc = "";
+			if (filetype ==".java") {
+					desc = "Java Source Files";
+				}
+			else if (filetype == ".txt") {
+					desc = "Text Documents";
 			}
-			return "Text Files" && "Java Source Files";
+			return desc;
 		}
+		
+		public void setFileName(String fType) {
+			filetype = fType;
+		}
+		}
+
+		
 	}
-}
 
