@@ -20,7 +20,7 @@ import java.io.*;
 
 public class Notepad implements ActionListener{
 	private JFrame frame = new JFrame("Untitled - Notepad");
-	private JTextArea mainText = new JTextArea();
+	private JTextArea mainText;
 	private boolean saved = true;
 	private File currentFile;
 	
@@ -29,6 +29,29 @@ public class Notepad implements ActionListener{
 	frame.setLayout(new BorderLayout());
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setSize(640, 480);
+	
+	mainText = new JTextArea();
+	mainText.getDocument().addDocumentListener(new DocumentListener() {
+		public void insertUpdate(DocumentEvent e) {
+			saved = false;
+			if (currentFile != null && currentFile.exists()) {
+				frame.setTitle(currentFile.getName() + "* - Notepad");
+			}
+		}
+		public void changedUpdate(DocumentEvent e) {
+			saved = false;	
+			if (currentFile != null && currentFile.exists()) {
+				frame.setTitle(currentFile.getName() + "* - Notepad");
+			}
+		}
+		public void removeUpdate(DocumentEvent e) {
+			saved = false;
+			if (currentFile != null && currentFile.exists()) {
+				frame.setTitle(currentFile.getName() + "* - Notepad");
+			}
+		}
+	});
+	
 	JScrollPane textScrollPane = new JScrollPane(mainText);
 	JMenuBar optionBar = new JMenuBar();
 	
@@ -74,10 +97,6 @@ public class Notepad implements ActionListener{
 	items[21] = new JMenuItem("Status Bar");
 	items[22] = new JMenuItem("Extra Credit");
 	items[23] = new JMenuItem("About Notepad");
-	
-	
-	
-	
 	for (JMenu o: options) {
 		optionBar.add(o);
 	}
@@ -140,27 +159,37 @@ public class Notepad implements ActionListener{
 		switch (e.getActionCommand()) {
 			case "New": {
 				if (saved = false) {
-					int answer = JOptionPane.showConfirmDialog(frame, "You have not saved. Do you want to save and exit now? ", "Exit", JOptionPane.YES_NO_CANCEL_OPTION);
+					int answer = JOptionPane.showConfirmDialog(frame, "You have not saved. Do you want to save this file? ", "Exit", JOptionPane.YES_NO_CANCEL_OPTION);
 					switch (answer) {
 				case JOptionPane.YES_OPTION:
+					this.actionPerformed(new ActionEvent(frame, 0, "Save"));
 					saved = true;
-					System.exit(0);
+					mainText = new JTextArea();
 					break;
 				case JOptionPane.NO_OPTION:
-					System.exit(0);
+					mainText = new JTextArea();
 					break;
 				}
+				
 				}
 				else {
 					currentFile = null;
-					frame.setTitle("Untitled - Notepad");
+					int temp = mainText.getCaretPosition();
+					mainText.select(0, 10);
+					frame.setTitle(mainText.getSelectedText() + " - Notepad");
+					mainText.select(temp, temp);
 				}
 				break;
 			}
+			
 			case "Open": {
 				JFileChooser j = new JFileChooser();
-				new CustomJavaFileFilter()
-				j.setFileFilter(new CustomJavaFileFilter());
+				CustomJavaFileFilter cust1 = new CustomJavaFileFilter();
+				CustomJavaFileFilter cust2 = new CustomJavaFileFilter();
+				cust1.setFileType(".txt");
+				cust2.setFileType(".java");
+				j.setFileFilter(cust1);
+				j.setFileFilter(cust2);
 				FileReader fr;
 				int result = j.showOpenDialog(null);
 				
@@ -174,11 +203,9 @@ public class Notepad implements ActionListener{
 						saved = true;
 					}
 					catch (IOException ex) {
-						JOptionPane.showMessageDialog(frame, "Error!");
-					}
-					}
-					else 
 						JOptionPane.showMessageDialog(frame, "Invalid file or no file here!");
+					}
+					}
 			 break;           
 			}
 			
@@ -186,11 +213,14 @@ public class Notepad implements ActionListener{
 				FileWriter fw;
 				if (currentFile == null) {
 					this.actionPerformed(new ActionEvent(frame, 0, "Save As"));
+					
 				}
 				else {
 					try {
 					fw = new FileWriter(currentFile);
 					mainText.write(fw);
+					frame.setTitle(currentFile.getName() + " - Notepad");
+					saved = true;
 					}
 				catch (IOException ex) {
 					JOptionPane.showMessageDialog(frame, "Invalid file or no file here!");
@@ -199,9 +229,10 @@ public class Notepad implements ActionListener{
 		
 				  
 			saved = true;
-			break;
-					
+			break;	
 			}
+			
+			
 			case "Save As": {
 				JFileChooser j = new JFileChooser();
 				FileWriter fw;
@@ -213,23 +244,31 @@ public class Notepad implements ActionListener{
 					    File tempText = j.getSelectedFile();
 					    
 						fw = new FileWriter(tempText);
-						mainText.write(fw);
-						if (tempText != currentFile) {
+						
+						if (j.getSelectedFile().exists()) {
+					        if(JOptionPane.showConfirmDialog(j, "Do you want to replace this file?", "Replace File?",JOptionPane.YES_NO_CANCEL_OPTION) == JOptionPane.YES_OPTION) {
+					            currentFile = tempText;
+					            mainText.write(fw);
+					        }
+					        else {
+					            this.actionPerformed(new ActionEvent(frame, 0, "Save As"));
+					        }
+					        }
 					        frame.setTitle(j.getSelectedFile().getName() + " - Notepad");
-					    }
-						frame.setTitle(j.getSelectedFile().getName() + " - Notepad");
 						saved = true; 
+					
+						
 					}
 					catch (IOException ex) {
-						JOptionPane.showMessageDialog(frame, "Error!");
-					}
-					}
-					else 
 						JOptionPane.showMessageDialog(frame, "Invalid file or no file here!");
+					}
+						
 			          
 				saved = true;
+					}
 				break;  
-			}
+				}
+				
 			case "Exit": {
 				if (saved == true) {
 				int answer = JOptionPane.showConfirmDialog(frame, "Exit now? ", "Exit", JOptionPane.YES_NO_OPTION);
@@ -241,6 +280,7 @@ public class Notepad implements ActionListener{
 					break;
 				}
 			}
+			
 			else{ 
 				int answer = JOptionPane.showConfirmDialog(frame, "You have not saved. Do you want to save and exit now? ", "Exit", JOptionPane.YES_NO_CANCEL_OPTION);
 			switch (answer) {
@@ -256,12 +296,42 @@ public class Notepad implements ActionListener{
 			}
 			break;
 			}
-			case "Font": {
-					Font font = JFontChooser.showFontViewer(frame, frame.getFont());
-					mainText.setFont(font);
-				break;    
-			} 
-		case "Go to": {
+			
+			case "Cut": {
+				mainText.cut();
+				break;
+			}
+			
+			case "Copy": {
+				mainText.copy();
+				break;
+			}
+			
+			case "Paste": {
+				mainText.paste();
+				break;
+			}
+			
+			case "Delete": {
+			mainText.replaceRange("", mainText.getSelectionStart(), mainText.getSelectionEnd());
+			break;
+		}
+		
+			case "Find": {
+				JDialog findD = new JDialog(frame, "Find:");
+				findD.setSize(150, 100);
+				JLabel findL = new JLabel("Find:");
+				JTextField findT = new JTextField();
+				JButton findB1 = new JButton("Find");
+				findB1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent ae) {
+						
+					}
+				});
+				JButton cancel = new JButton("Cancel");
+			}
+			
+			case "Go to": {
 			int pos = GoToDlg.displayGUI(frame, mainText.getCaretPosition());
 			if (pos < 0 && pos > mainText.getLineCount()) {
 				JOptionPane.showMessageDialog(frame, "This line does not exist!");
@@ -271,33 +341,24 @@ public class Notepad implements ActionListener{
 			}
 			break;
 		}
+		
+			
+			case "Font": {
+					Font font = JFontChooser.showFontViewer(frame, frame.getFont());
+					mainText.setFont(font);
+				break;    
+			}
+			
+		
+		
 		case "About": {
 			JOptionPane.showMessageDialog(frame, "Notepad by O. Reid");
 			break;
 		}
+	}
 		
 		
 		
-		case "Delete": {
-			mainText.replaceRange("", mainText.getSelectionStart(), mainText.getSelectionEnd());
-			break;
-		}
-		
-		case "Cut": {
-			mainText.cut();
-			break;
-		}
-		
-		case "Copy": {
-			mainText.copy();
-			break;
-		}
-		
-		case "Paste": {
-			mainText.paste();
-			break;
-		}
-		}
 	}
 	
 	public static void main(String[] args) {
@@ -331,7 +392,7 @@ public class Notepad implements ActionListener{
 			return desc;
 		}
 		
-		public void setFileName(String fType) {
+		public void setFileType(String fType) {
 			filetype = fType;
 		}
 		}
