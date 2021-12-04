@@ -4,7 +4,6 @@ import java.awt.*;
 public class GoToDlg {
 
 	private int position;
-	//private boolean init = false;
 	
 	public int getPosition() {
 		return position;
@@ -25,22 +24,23 @@ public class GoToDlg {
 		dialog.setLayout(new GridLayout(3,1));
 		dialog.setSize(300, 300);
 		JLabel label = new JLabel("Line Number: ");
-		JFormattedTextField enter = new JFormattedTextField(1);
+		JTextField enter = new JTextField();
 		
 		JButton go = new JButton("Go to");
 		
 		go.addActionListener(ae -> {
+			try {
 			dlg.setPosition(Integer.parseInt(enter.getText()));
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Please type in only numbers!");
+			}
 			dialog.setVisible(false);
-			
-			
 		});
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(ae -> {
 			dialog.setVisible(false);
 		});
-		
-		
 		
 		dialog.add(label);
 		dialog.add(enter);
