@@ -1,5 +1,8 @@
 import javax.swing.*;
+import javax.swing.text.*;
+
 import java.awt.*;
+import java.text.NumberFormat;
 
 public class GoToDlg {
 
@@ -13,28 +16,23 @@ public class GoToDlg {
 		this.position = position;
 	}
 	
-	
 	public static int displayGUI(JFrame parent, int pos) {
 		GoToDlg dlg = new GoToDlg();
 		if (pos >= 0) {
 			dlg.setPosition(pos);
 		}
-		JDialog dialog = new JDialog(parent, "Go to Line");
+		JDialog dialog = new JDialog(parent, "Go to Line", true);
 		dialog.setLocationRelativeTo(parent);
 		dialog.setLayout(new GridLayout(3,1));
 		dialog.setSize(300, 300);
 		JLabel label = new JLabel("Line Number: ");
-		JTextField enter = new JTextField();
+		JFormattedTextField enter = new JFormattedTextField();
+		enter.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(NumberFormat.getIntegerInstance())));
 		
 		JButton go = new JButton("Go to");
 		
 		go.addActionListener(ae -> {
-			try {
 			dlg.setPosition(Integer.parseInt(enter.getText()));
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Please type in only numbers!");
-			}
 			dialog.setVisible(false);
 		});
 		JButton cancel = new JButton("Cancel");

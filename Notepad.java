@@ -25,6 +25,10 @@ public class Notepad implements ActionListener, DocumentListener{
 	private Font defaultFont = new Font("Courier", Font.PLAIN, 12);
 	private boolean saved = true;
 	private File currentFile;
+	private int results;
+	private int currentResult = -1;
+	private String inquiry;
+	String[] totalWords;
 	
 	
 	public Notepad() {
@@ -342,14 +346,10 @@ public class Notepad implements ActionListener, DocumentListener{
 				
 					if (result == JFileChooser.APPROVE_OPTION) {
 					try {
-					
-					    File tempText = j.getSelectedFile();
-					    
-						fw = new FileWriter(tempText);
-						
+						fw = new FileWriter(j.getSelectedFile());
 						if ((currentFile == j.getSelectedFile()) && j.getSelectedFile().exists()) {
 					        if(JOptionPane.showConfirmDialog(j, "Do you want to replace this file?", "Replace File?",JOptionPane.YES_NO_CANCEL_OPTION) == JOptionPane.YES_OPTION) {
-					            currentFile = tempText;
+					            currentFile = j.getSelectedFile();
 					            mainText.write(fw);
 					        }
 					        else {
@@ -357,7 +357,7 @@ public class Notepad implements ActionListener, DocumentListener{
 					        }
 					        }
 					        else {
-					            currentFile = tempText;
+					            currentFile = j.getSelectedFile();
 					            frame.setTitle(currentFile.getName() + " - Notepad");
 					            mainText.write(fw);
 					        }  
@@ -419,35 +419,83 @@ public class Notepad implements ActionListener, DocumentListener{
 		
 			case "Find": {
 				JDialog findD = new JDialog(frame, "Find:");
-				findD.setSize(150, 100);
-				JPanel buttons = new JPanel(new BorderLayout());
-				JLabel findL = new JLabel("Find:");
+				findD.setLocationRelativeTo(frame);
+				findD.setSize(350, 200);
+				findD.setLayout(new BorderLayout());
+				JLabel findL = new JLabel("\nFind:");
 				JTextField findT = new JTextField();
+				findT.setSize(350, 25);
+				JPanel other = new JPanel(new BorderLayout());
+				JPanel buttons = new JPanel(new BorderLayout());
 				JButton findB1 = new JButton("Find");
-				JButton findB2 = new JButton("Find Next");
-				findB1.addActionListener(new ActionListener() {
+				JButton can = new JButton("Cancel");
+				totalWords = mainText.getText().split("\n");
+				
+			findB1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
-						int results = 0;
-						String inquiry = findT.getText();
-						String[] totalWords = mainText.getText().split("\\W+");
-						
-						for (String t: totalWords) {
-							if (inquiry == t) {
-								results++;
+						if (inquiry == null || findT.getText() != inquiry) {
+							inquiry = findT.getText();
+							currentResult = 0;
+							for (String t: totalWords) {
+								int pos = t.indexOf(inquiry);
+									if (pos >= 0) {
+									results++;
+								}
 							}
 						}
+						
+						if (inquiry == null) {
+							JOptionPane.showMessageDialog(frame, "Sorry, please enter search inside the find bar.");
+							this.actionPerformed(new ActionEvent(frame, 0, "Find"));
+						}
+						boolean found = true;
+						for (int i = 0; i <= (totalWords.length & currentResult); i++)  {
+							
+							try {
+								currentResult++;
+								found = false;
+							int pos = totalWords[i].indexOf(inquiry);
+							
+								if (pos >= 0) {
+									try {
+									int realPos = mainText.getLineStartOffset(i) + pos;
+									
+									mainText.setCaretPosition(realPos);
+									mainText.moveCaretPosition(realPos+inquiry.length());
+									found = true;
+									}
+									catch (BadLocationException be) {
+										JOptionPane.showMessageDialog(frame, "Sorry, no results!");		
+									}
+								}
+								
+							}
+							catch (ArrayIndexOutOfBoundsException aio) {
+								if (found == false)
+								JOptionPane.showMessageDialog(frame, "Cannot find ' " +  inquiry+ "'");
+							} 
+						
+						}
 					}
-					//public void findAndSplit() extends split()
-					
-					
-				});
-				JButton can = new JButton("Cancel");
+				});		
 				can.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
 						findD.setVisible(false);
 					}
 				});
+				
+				buttons.add(findB1, BorderLayout.WEST);
+				buttons.add(can, BorderLayout.EAST);
+				findD.add(buttons, BorderLayout.SOUTH);
+				
+				other.add(findL, BorderLayout.NORTH);
+				other.add(findT, BorderLayout.CENTER);
+				findD.add(other, BorderLayout.NORTH);
+				if (findD.isVisible() != true)
+				findD.setVisible(true);
+				break;
 			}
+			
 			
 			case "Go to": {
 			int pos = GoToDlg.displayGUI(frame, mainText.getCaretPosition());
@@ -457,7 +505,7 @@ public class Notepad implements ActionListener, DocumentListener{
 			else {
 				try {
 				
-				int loc = mainText.getLineStartOffset(pos);
+				int loc = mainText.getLineStartOffset(pos - 1);
 				mainText.setCaretPosition(loc); }
 				catch (BadLocationException b) {
 					JOptionPane.showMessageDialog(frame, "This line does not exist!");
