@@ -29,6 +29,8 @@ public class Notepad implements ActionListener, DocumentListener{
 	private int currentResult = -1;
 	private String inquiry;
 	String[] totalWords;
+	private int[] positions;
+	private int currentPos;
 	
 	
 	public Notepad() {
@@ -442,14 +444,17 @@ public class Notepad implements ActionListener, DocumentListener{
 									results++;
 								}
 							}
+							positions = new int[results*2];
 						}
+					
 						
 						if (inquiry == null) {
 							JOptionPane.showMessageDialog(frame, "Sorry, please enter search inside the find bar.");
 							this.actionPerformed(new ActionEvent(frame, 0, "Find"));
 						}
 						boolean found = true;
-						for (int i = 0; i <= (totalWords.length & currentResult); i++)  {
+						int i = 0;
+						while (i <= (totalWords.length & currentResult) && found == true)  {
 							
 							try {
 								currentResult++;
@@ -458,10 +463,8 @@ public class Notepad implements ActionListener, DocumentListener{
 							
 								if (pos >= 0) {
 									try {
-									int realPos = mainText.getLineStartOffset(i) + pos;
-									
-									mainText.setCaretPosition(realPos);
-									mainText.moveCaretPosition(realPos+inquiry.length());
+									positions[i] = mainText.getLineStartOffset(i) + pos;
+									positions[i+1] = positions[i]+ inquiry.length();
 									found = true;
 									}
 									catch (BadLocationException be) {
@@ -474,8 +477,10 @@ public class Notepad implements ActionListener, DocumentListener{
 								if (found == false)
 								JOptionPane.showMessageDialog(frame, "Cannot find ' " +  inquiry+ "'");
 							} 
-						
+							i++;
 						}
+						mainText.setCaretPosition(positions[currentPos]);
+						mainText.moveCaretPosition(positions[currentPos+1]);
 					}
 				});		
 				can.addActionListener(new ActionListener() {
@@ -605,6 +610,6 @@ public class Notepad implements ActionListener, DocumentListener{
 		}
 		}
 
-		
+	
 	}
 
