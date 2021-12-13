@@ -28,7 +28,7 @@ public class Notepad implements ActionListener, DocumentListener{
 	private int results;
 	private int currentResult = -1;
 	private String inquiry;
-	String[] totalWords;
+	
 	
 	
 	public Notepad() {
@@ -429,10 +429,11 @@ public class Notepad implements ActionListener, DocumentListener{
 				JPanel buttons = new JPanel(new BorderLayout());
 				JButton findB1 = new JButton("Find");
 				JButton can = new JButton("Cancel");
-				totalWords = mainText.getText().split("\n");
+				String[] totalWords = mainText.getText().split("\n");
 				
 			findB1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
+						
 						if (inquiry == null || findT.getText() != inquiry) {
 							inquiry = findT.getText();
 							currentResult = 0;
@@ -449,20 +450,23 @@ public class Notepad implements ActionListener, DocumentListener{
 							this.actionPerformed(new ActionEvent(frame, 0, "Find"));
 						}
 						boolean found = true;
-						for (int i = 0; i <= (totalWords.length & currentResult); i++)  {
-							
+						int line = 0;
+						//for (int i = 0; i <= (totalWords.length & currentResult); i++)
+						if (line <= mainText.getLineCount()) {
+						do {
 							try {
 								currentResult++;
-								found = false;
-							int pos = totalWords[i].indexOf(inquiry);
+							int pos = totalWords[line].indexOf(inquiry);
 							
 								if (pos >= 0) {
-									try {
-									int realPos = mainText.getLineStartOffset(i) + pos;
+									try { 
+									int realPos = mainText.getLineStartOffset(line) + pos;
+									
 									
 									mainText.setCaretPosition(realPos);
 									mainText.moveCaretPosition(realPos+inquiry.length());
 									found = true;
+									line++;
 									}
 									catch (BadLocationException be) {
 										JOptionPane.showMessageDialog(frame, "Sorry, no results!");		
@@ -472,11 +476,16 @@ public class Notepad implements ActionListener, DocumentListener{
 							}
 							catch (ArrayIndexOutOfBoundsException aio) {
 								if (found == false)
+								line--;
+								if ((line == 0) && (found = false)) {
 								JOptionPane.showMessageDialog(frame, "Cannot find ' " +  inquiry+ "'");
+								}
 							} 
+							
 						
-						}
+						} while (found = true);
 					}
+				}
 				});		
 				can.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
@@ -604,7 +613,24 @@ public class Notepad implements ActionListener, DocumentListener{
 			filetype = fType;
 		}
 		}
-
 		
+		class posNode<Integer> extends Node<T>
+		{
+		  private int firstPos; // Entry in bag
+		  private int lastPos;
+		  private posNode next; // Link to next node
+	
+			private posNode(int begin, int end)
+			{
+				this(begin, end, null);	
+			} // end constructor
+			
+			private posNode(int begin, int end, posNode nextNode)
+			{
+				firstPos = begin;
+				lastPos = end;
+				next = nextNode;	
+			} // end constructor
+		} // end Node
 	}
 
