@@ -433,11 +433,13 @@ public class Notepad implements ActionListener, DocumentListener{
 				JButton can = new JButton("Cancel");
 				totalWords = mainText.getText().split("\n");
 				
-			findB1.addActionListener(new ActionListener() {
+				findB1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
-						if (inquiry == null || findT.getText() != inquiry) {
+					
+						
+						
+						if (inquiry == null || !(findT.getText().equals(inquiry))) {
 							inquiry = findT.getText();
-							currentResult = 0;
 							for (String t: totalWords) {
 								int pos = t.indexOf(inquiry);
 									if (pos >= 0) {
@@ -445,19 +447,19 @@ public class Notepad implements ActionListener, DocumentListener{
 								}
 							}
 							positions = new int[results*2];
-						}
+							
 					
 						
 						if (inquiry == null) {
 							JOptionPane.showMessageDialog(frame, "Sorry, please enter search inside the find bar.");
 							this.actionPerformed(new ActionEvent(frame, 0, "Find"));
 						}
+						
 						boolean found = true;
 						int i = 0;
-						while (i <= (totalWords.length & currentResult) && found == true)  {
+						while (i <= (totalWords.length & results) && found == true)  {
 							
 							try {
-								currentResult++;
 								found = false;
 							int pos = totalWords[i].indexOf(inquiry);
 							
@@ -474,14 +476,20 @@ public class Notepad implements ActionListener, DocumentListener{
 								
 							}
 							catch (ArrayIndexOutOfBoundsException aio) {
-								if (found == false)
-								JOptionPane.showMessageDialog(frame, "Cannot find ' " +  inquiry+ "'");
+								if (found == false && results <= 0)
+								JOptionPane.showMessageDialog(frame, "Cannot find ' " +  inquiry + "'");
 							} 
 							i++;
 						}
 						mainText.setCaretPosition(positions[currentPos]);
 						mainText.moveCaretPosition(positions[currentPos+1]);
+						currentPos+=2;
 					}
+					else if ((currentPos/2) < results){
+						mainText.setCaretPosition(positions[currentPos]);
+						mainText.moveCaretPosition(positions[currentPos+1]);
+					}
+				}
 				});		
 				can.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ae) {
@@ -554,6 +562,8 @@ public class Notepad implements ActionListener, DocumentListener{
 		else {
 			frame.setTitle("Untitled* - Notepad");
 		}
+		
+		
 		
 	}
 	public void changedUpdate(DocumentEvent e) {
