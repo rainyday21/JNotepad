@@ -440,9 +440,12 @@ public class Notepad implements ActionListener, DocumentListener{
 						
 						if (inquiry == null || !(findT.getText().equals(inquiry))) {
 							inquiry = findT.getText();
+							positions = null;
+							results = 0;
+							currentPos = 0;
 							for (String t: totalWords) {
 								int pos = t.indexOf(inquiry);
-									if (pos >= 0) {
+									if (pos > 0) {
 									results++;
 								}
 							}
@@ -488,6 +491,7 @@ public class Notepad implements ActionListener, DocumentListener{
 					else if ((currentPos/2) < results){
 						mainText.setCaretPosition(positions[currentPos]);
 						mainText.moveCaretPosition(positions[currentPos+1]);
+						currentPos+=2;
 					}
 				}
 				});		
@@ -510,7 +514,7 @@ public class Notepad implements ActionListener, DocumentListener{
 			}
 			
 			
-			case "Go to": {
+		/*	case "Go to": {
 			int pos = GoToDlg.displayGUI(frame, mainText.getCaretPosition());
 			if (pos < 0 && pos > mainText.getLineCount()) {
 				JOptionPane.showMessageDialog(frame, "This line does not exist!");
@@ -525,7 +529,7 @@ public class Notepad implements ActionListener, DocumentListener{
 				}
 			}
 			break;
-		}
+		}*/
 			case "Select All": {
 				mainText.select(0, mainText.getText().length());
 				break;
